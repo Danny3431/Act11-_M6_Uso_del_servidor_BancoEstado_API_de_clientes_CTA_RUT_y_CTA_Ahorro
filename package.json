@@ -1,0 +1,9 @@
+{
+  "name": "actividad11-bancoestado",
+  "version": "1.0.0",
+  "description": "Sistema de gestión de cuentas BancoEstado",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

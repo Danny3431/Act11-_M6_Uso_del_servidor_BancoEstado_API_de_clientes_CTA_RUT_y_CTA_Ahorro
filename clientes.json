@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "nombre": "Juan Pérez",
+    "cuentaRut": { "numero": "12345678-9", "saldo": 150000 },
+    "cuentasAhorro": [
+      { "numero": "AH-001", "saldo": 500000 },
+      { "numero": "AH-002", "saldo": 250000 }
+    ]
+  },
+  {
+    "id": 2,
+    "nombre": "María González",
+    "cuentaRut": { "numero": "98765432-1", "saldo": 80000 },
+    "cuentasAhorro": [
+      { "numero": "AH-003", "saldo": 1000000 }
+    ]
+  }
+]

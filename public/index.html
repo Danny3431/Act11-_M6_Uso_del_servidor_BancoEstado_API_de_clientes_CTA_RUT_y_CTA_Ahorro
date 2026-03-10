@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>BancoEstado - Gestión de Cuentas</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header>
+  <span>🏦</span>
+  <h1>BancoEstado — Gestión de Cuentas</h1>
+</header>
+
+<div class="contenedor">
+
+  <!-- Mensaje flotante de éxito/error -->
+  <div class="mensaje" id="mensaje"></div>
+
+  <div class="layout">
+
+    <!-- Columna izquierda: botones -->
+    <div class="acciones">
+      <button class="btn-primario"   onclick="listarTodos()">👥 Listar todos los clientes</button>
+      <button class="btn-secundario" onclick="listarConRut()">🪪 Listar con cuenta RUT</button>
+      <button class="btn-success"    onclick="abrirModal('nuevo-cliente')">➕ Nuevo cliente + RUT</button>
+      <button class="btn-success"    onclick="abrirModal('nuevo-cliente-ahorro')">➕ Nuevo cliente + Ahorro</button>
+      <button class="btn-secundario" onclick="abrirModal('agregar-rut')">💳 Agregar cuenta RUT</button>
+      <button class="btn-secundario" onclick="abrirModal('agregar-ahorro')">💰 Agregar cuenta Ahorro</button>
+      <button class="btn-danger"     onclick="abrirModal('eliminar-cliente')">🗑 Eliminar cliente</button>
+      <button class="btn-danger"     onclick="abrirModal('eliminar-rut')">❌ Eliminar cuenta RUT</button>
+      <button class="btn-danger"     onclick="abrirModal('eliminar-ahorro')">❌ Eliminar cuenta Ahorro</button>
+    </div>
+
+    <!-- Columna derecha: resultados -->
+    <div class="resultado-col">
+      <div class="panel" id="panel-resultado" style="display:none">
+        <h2 id="panel-titulo"></h2>
+        <div id="panel-contenido"></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ── MODALES ─────────────────────────────────────────────────────────── -->
+
+<!-- Nuevo cliente + Cuenta RUT -->
+<div class="modal-overlay" id="modal-nuevo-cliente">
+  <div class="modal">
+    <h3>➕ Nuevo cliente con Cuenta RUT</h3>
+    <input type="text"   id="nc-nombre"      placeholder="Nombre del cliente">
+    <input type="text"   id="nc-rut-numero"  placeholder="Número cuenta RUT (ej: 12345678-9)">
+    <input type="number" id="nc-rut-saldo"   placeholder="Saldo inicial">
+    <div class="modal-botones">
+      <button class="btn-secundario" onclick="cerrarModal('nuevo-cliente')">Cancelar</button>
+      <button class="btn-success"    onclick="crearClienteConRut()">Crear cliente</button>
+    </div>
+  </div>
+</div>
+
+<!-- Nuevo cliente + Cuenta Ahorro -->
+<div class="modal-overlay" id="modal-nuevo-cliente-ahorro">
+  <div class="modal">
+    <h3>➕ Nuevo cliente con Cuenta Ahorro</h3>
+    <input type="text"   id="nca-nombre"    placeholder="Nombre del cliente">
+    <input type="text"   id="nca-rut-num"   placeholder="Número cuenta RUT (obligatorio)">
+    <input type="number" id="nca-rut-saldo" placeholder="Saldo cuenta RUT">
+    <input type="text"   id="nca-ah-num"    placeholder="Número cuenta Ahorro (ej: AH-001)">
+    <input type="number" id="nca-ah-saldo"  placeholder="Saldo cuenta Ahorro">
+    <div class="modal-botones">
+      <button class="btn-secundario" onclick="cerrarModal('nuevo-cliente-ahorro')">Cancelar</button>
+      <button class="btn-success"    onclick="crearClienteConAhorro()">Crear cliente</button>
+    </div>
+  </div>
+</div>
+
+<!-- Agregar cuenta RUT a cliente existente -->
+<div class="modal-overlay" id="modal-agregar-rut">
+  <div class="modal">
+    <h3>💳 Agregar cuenta RUT a cliente existente</h3>
+    <input type="number" id="ar-id"     placeholder="ID del cliente">
+    <input type="text"   id="ar-numero" placeholder="Número cuenta RUT">
+    <input type="number" id="ar-saldo"  placeholder="Saldo inicial">
+    <div class="modal-botones">
+      <button class="btn-secundario" onclick="cerrarModal('agregar-rut')">Cancelar</button>
+      <button class="btn-primario"   onclick="agregarRut()">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Agregar cuenta Ahorro a cliente existente -->
+<div class="modal-overlay" id="modal-agregar-ahorro">
+  <div class="modal">
+    <h3>💰 Agregar cuenta Ahorro a cliente existente</h3>
+    <input type="number" id="aa-id"     placeholder="ID del cliente">
+    <input type="text"   id="aa-numero" placeholder="Número cuenta Ahorro">
+    <input type="number" id="aa-saldo"  placeholder="Saldo inicial">
+    <div class="modal-botones">
+      <button class="btn-secundario" onclick="cerrarModal('agregar-ahorro')">Cancelar</button>
+      <button class="btn-primario"   onclick="agregarAhorro()">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Eliminar cliente -->
+<div class="modal-overlay" id="modal-eliminar-cliente">
+  <div class="modal">
+    <h3>🗑 Eliminar cliente y todas sus cuentas</h3>
+    <input type="number" id="ec-id" placeholder="ID del cliente">
+    <div class="modal-botones">
+      <button class="btn-secundario" onclick="cerrarModal('eliminar-cliente')">Cancelar</button>
+      <button class="btn-danger"     onclick="eliminarCliente()">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Eliminar cuenta RUT -->
+<div class="modal-overlay" id="modal-eliminar-rut">
+  <div class="modal">
+    <h3>❌ Eliminar cuenta RUT de cliente</h3>
+    <input type="number" id="er-id" placeholder="ID del cliente">
+    <div class="modal-botones">
+      <button class="btn-secundario" onclick="cerrarModal('eliminar-rut')">Cancelar</button>
+      <button class="btn-danger"     onclick="eliminarRut()">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Eliminar cuenta Ahorro -->
+<div class="modal-overlay" id="modal-eliminar-ahorro">
+  <div class="modal">
+    <h3>❌ Eliminar cuenta Ahorro de cliente</h3>
+    <input type="number" id="ea-id"     placeholder="ID del cliente">
+    <input type="text"   id="ea-numero" placeholder="Número cuenta Ahorro (ej: AH-001)">
+    <div class="modal-botones">
+      <button class="btn-secundario" onclick="cerrarModal('eliminar-ahorro')">Cancelar</button>
+      <button class="btn-danger"     onclick="eliminarAhorro()">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Helpers UI ───────────────────────────────────────────────────────────
+  function abrirModal(nombre)  { document.getElementById(`modal-${nombre}`).classList.add('activo'); }
+  function cerrarModal(nombre) { document.getElementById(`modal-${nombre}`).classList.remove('activo'); }
+
+  function mostrarMensaje(texto, tipo) {
+    const el = document.getElementById('mensaje');
+    el.textContent = texto;
+    el.className = `mensaje ${tipo}`;
+    setTimeout(() => { el.className = 'mensaje'; }, 4000);
+  }
+
+  function mostrarPanel(titulo, html) {
+    document.getElementById('panel-titulo').textContent = titulo;
+    document.getElementById('panel-contenido').innerHTML = html;
+    document.getElementById('panel-resultado').style.display = 'block';
+  }
+
+  // ── Renderizar tabla de clientes ─────────────────────────────────────────
+  function renderizarClientes(clientes, titulo) {
+    if (clientes.length === 0) {
+      mostrarPanel(titulo, '<p>No hay clientes.</p>');
+      return;
+    }
+    let html = `<table>
+      <tr><th>ID</th><th>Nombre</th><th>Cuenta RUT</th><th>Cuentas Ahorro</th></tr>`;
+
+    clientes.forEach(c => {
+      const rut    = c.cuentaRut
+        ? `<span class="cuenta-rut">${c.cuentaRut.numero}</span><br>Saldo: $${c.cuentaRut.saldo.toLocaleString()}`
+        : '<em>Sin cuenta RUT</em>';
+      const ahorros = c.cuentasAhorro.length > 0
+        ? c.cuentasAhorro.map(a => `<span class="cuenta-ahorro">${a.numero}</span> $${a.saldo.toLocaleString()}`).join('<br>')
+        : '<em>Sin cuentas</em>';
+
+      html += `<tr>
+        <td>${c.id}</td>
+        <td><strong>${c.nombre}</strong></td>
+        <td>${rut}</td>
+        <td>${ahorros}</td>
+      </tr>`;
+    });
+
+    html += '</table>';
+    mostrarPanel(titulo, html);
+  }
+
+  // ── Listar todos ─────────────────────────────────────────────────────────
+  async function listarTodos() {
+    const res      = await fetch('/api/clientes');
+    const clientes = await res.json();
+    renderizarClientes(clientes, '👥 Todos los clientes');
+  }
+
+  // ── Listar con RUT ───────────────────────────────────────────────────────
+  async function listarConRut() {
+    const res      = await fetch('/api/clientes/rut');
+    const clientes = await res.json();
+    renderizarClientes(clientes, '🪪 Clientes con cuenta RUT');
+  }
+
+  // ── Crear cliente con cuenta RUT ─────────────────────────────────────────
+  async function crearClienteConRut() {
+    const nombre = document.getElementById('nc-nombre').value.trim();
+    const numero = document.getElementById('nc-rut-numero').value.trim();
+    const saldo  = Number(document.getElementById('nc-rut-saldo').value);
+    if (!nombre || !numero) return mostrarMensaje('Completa todos los campos', 'error');
+
+    const res  = await fetch('/api/clientes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, cuentaRut: { numero, saldo }, cuentasAhorro: [] })
+    });
+    const data = await res.json();
+    mostrarMensaje(data.mensaje || data.error, res.ok ? 'ok' : 'error');
+    if (res.ok) { cerrarModal('nuevo-cliente'); listarTodos(); }
+  }
+
+  // ── Crear cliente con cuenta RUT + Ahorro ────────────────────────────────
+  async function crearClienteConAhorro() {
+    const nombre   = document.getElementById('nca-nombre').value.trim();
+    const rutNum   = document.getElementById('nca-rut-num').value.trim();
+    const rutSaldo = Number(document.getElementById('nca-rut-saldo').value);
+    const ahNum    = document.getElementById('nca-ah-num').value.trim();
+    const ahSaldo  = Number(document.getElementById('nca-ah-saldo').value);
+    if (!nombre || !rutNum || !ahNum) return mostrarMensaje('Completa todos los campos', 'error');
+
+    const res  = await fetch('/api/clientes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre,
+        cuentaRut: { numero: rutNum, saldo: rutSaldo },
+        cuentasAhorro: [{ numero: ahNum, saldo: ahSaldo }]
+      })
+    });
+    const data = await res.json();
+    mostrarMensaje(data.mensaje || data.error, res.ok ? 'ok' : 'error');
+    if (res.ok) { cerrarModal('nuevo-cliente-ahorro'); listarTodos(); }
+  }
+
+  // ── Agregar cuenta RUT a cliente existente ───────────────────────────────
+  async function agregarRut() {
+    const id     = document.getElementById('ar-id').value;
+    const numero = document.getElementById('ar-numero').value.trim();
+    const saldo  = Number(document.getElementById('ar-saldo').value);
+    if (!id || !numero) return mostrarMensaje('Completa todos los campos', 'error');
+
+    const res  = await fetch(`/api/clientes/${id}/rut`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ numero, saldo })
+    });
+    const data = await res.json();
+    mostrarMensaje(data.mensaje || data.error, res.ok ? 'ok' : 'error');
+    if (res.ok) { cerrarModal('agregar-rut'); listarTodos(); }
+  }
+
+  // ── Agregar cuenta Ahorro a cliente existente ────────────────────────────
+  async function agregarAhorro() {
+    const id     = document.getElementById('aa-id').value;
+    const numero = document.getElementById('aa-numero').value.trim();
+    const saldo  = Number(document.getElementById('aa-saldo').value);
+    if (!id || !numero) return mostrarMensaje('Completa todos los campos', 'error');
+
+    const res  = await fetch(`/api/clientes/${id}/ahorro`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ numero, saldo })
+    });
+    const data = await res.json();
+    mostrarMensaje(data.mensaje || data.error, res.ok ? 'ok' : 'error');
+    if (res.ok) { cerrarModal('agregar-ahorro'); listarTodos(); }
+  }
+
+  // ── Eliminar cliente ─────────────────────────────────────────────────────
+  async function eliminarCliente() {
+    const id = document.getElementById('ec-id').value;
+    if (!id) return mostrarMensaje('Ingresa el ID del cliente', 'error');
+
+    const res  = await fetch(`/api/clientes/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    mostrarMensaje(data.mensaje || data.error, res.ok ? 'ok' : 'error');
+    if (res.ok) { cerrarModal('eliminar-cliente'); listarTodos(); }
+  }
+
+  // ── Eliminar cuenta RUT ──────────────────────────────────────────────────
+  async function eliminarRut() {
+    const id = document.getElementById('er-id').value;
+    if (!id) return mostrarMensaje('Ingresa el ID del cliente', 'error');
+
+    const res  = await fetch(`/api/clientes/${id}/rut`, { method: 'DELETE' });
+    const data = await res.json();
+    mostrarMensaje(data.mensaje || data.error, res.ok ? 'ok' : 'error');
+    if (res.ok) { cerrarModal('eliminar-rut'); listarTodos(); }
+  }
+
+  // ── Eliminar cuenta Ahorro ───────────────────────────────────────────────
+  async function eliminarAhorro() {
+    const id     = document.getElementById('ea-id').value;
+    const numero = document.getElementById('ea-numero').value.trim();
+    if (!id || !numero) return mostrarMensaje('Completa todos los campos', 'error');
+
+    const res  = await fetch(`/api/clientes/${id}/ahorro/${encodeURIComponent(numero)}`, { method: 'DELETE' });
+    const data = await res.json();
+    mostrarMensaje(data.mensaje || data.error, res.ok ? 'ok' : 'error');
+    if (res.ok) { cerrarModal('eliminar-ahorro'); listarTodos(); }
+  }
+</script>
+
+</body>
+</html>
